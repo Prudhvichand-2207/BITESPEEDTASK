@@ -115,15 +115,19 @@ contains a form for entering email/phone and a script that calls the API and
 renders the response.  No additional build step is required.
 
 
-## Additional notes
+## 📁 Folder Structure
 
-* Add a `.gitignore` if you don’t already have one (e.g. ignore `node_modules/`,
-  `dev.db`, `dist/`).
-* To deploy the frontend, simply host `test.html` on any static‑file server or
-  point a GitHub Pages / Netlify site at the repo.
-* Update the **Website** field in the repo settings and the section below once
-you have a live URL.
-
+```text
+├── prisma/
+│   └── schema.prisma      # Prisma Data Model (Contact)
+├── src/
+│   └── index.ts           # Express Server Setup, Routes, & Core Logic
+├── test.html              # Frontend testing UI 
+├── package.json
+├── package-lock.json
+├── tsconfig.json          # TypeScript Configuration
+└── README.md
+```
 
 ---
 
