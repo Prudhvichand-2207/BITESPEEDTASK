@@ -1,3 +1,0 @@
-git add .gitattributes
-git commit -m "chore: ignore html in language stats"
-git push
