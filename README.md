@@ -33,8 +33,7 @@ The endpoint is `POST /identify`. It accepts JSON body:
 ```
 
 You can test with cURL:
-```bash
+:: Windows Command Prompt
 curl -X POST http://localhost:3000/identify \
   -H "Content-Type: application/json" \
-  -d '{"email":"lorraine@hillvalley.edu","phoneNumber":"123456"}'
-```
+  -d "{\"email\":\"lorraine@hillvalley.edu\",\"phoneNumber\":\"123456\"}"
