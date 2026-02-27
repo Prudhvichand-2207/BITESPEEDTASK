@@ -2,7 +2,7 @@
 
 
 
-## Overview
+## Bitespeed Identity Reconciliation Service
 
 An Express/TypeScript service that performs identity reconciliation for customer support tracking. Using a local SQLite database via Prisma, the API accepts an email address and/or phone number and responds with a consolidated contact record, seamlessly merging customer identities across different channels.
 
