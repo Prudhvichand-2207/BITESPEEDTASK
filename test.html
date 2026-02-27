@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitespeed Identify Reconciler</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            /* Deep elegant blue-gray */
+            --surface: #1e293b;
+            /* Slightly lighter card background */
+            --text-primary: #f8fafc;
+            /* Crisp white */
+            --text-secondary: #94a3b8;
+            /* Soft gray */
+            --accent: #38bdf8;
+            /* Vibrant cyan accent */
+            --accent-hover: #0ea5e9;
+            --border: rgba(255, 255, 255, 0.08);
+            --success: #34d399;
+            --error: #fb7185;
+            --glow: rgba(56, 189, 248, 0.5);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 2.5rem 3rem;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle glowing top trim */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 500;
+            margin: 0 0 0.5rem 0;
+            text-align: center;
+            letter-spacing: -0.02em;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+            font-weight: 300;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-primary);
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(148, 163, 184, 0.5);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 1px var(--accent), 0 0 15px rgba(56, 189, 248, 0.15);
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .result-container {
+            margin-top: 2.5rem;
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-header {
+            font-weight: 400;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Professional Output Display */
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .data-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .data-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
+        .data-card-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .data-primary-id {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 400;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .badge.highlight {
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .empty-text {
+            color: #64748b;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.9rem;
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status {
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status.success {
+            color: var(--success);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .status.error {
+            color: var(--error);
+            border: 1px solid rgba(251, 113, 133, 0.2);
+        }
+
+        .loader {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+            display: none;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Bitespeed Target Identity</h1>
+        <p class="subtitle">Enter customer details to reconcile across purchases.</p>
+
+        <form id="identifyForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email address">
+            </div>
+
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number</label>
+                <input type="text" id="phoneNumber" placeholder="Enter 10-digit mobile number">
+            </div>
+
+            <button type="submit" id="submitBtn">
+                <span id="btnText">Identify Contact</span>
+                <div class="loader" id="loader"></div>
+            </button>
+        </form>
+
+        <div class="result-container" id="resultContainer">
+            <div class="result-header">
+                Consolidated Profile
+                <span class="status" id="statusIndicator"></span>
+            </div>
+            <div id="parsedOutput" class="card-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('identifyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+
+            // Build payload
+            const payload = {};
+            if (email) payload.email = email;
+            if (phoneNumber) payload.phoneNumber = phoneNumber;
+
+            if (!email && !phoneNumber) {
+                alert("Please provide at least an email or a phone number.");
+                return;
+            }
+
+            // UI feedback
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('loader');
+            const resultContainer = document.getElementById('resultContainer');
+            const parsedOutput = document.getElementById('parsedOutput');
+            const statusIndicator = document.getElementById('statusIndicator');
+
+            btnText.style.display = 'none';
+            loader.style.display = 'block';
+            resultContainer.style.display = 'none';
+            parsedOutput.innerHTML = '';
+
+            try {
+                const response = await fetch('http://localhost:3000/identify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                statusIndicator.textContent = response.ok ? 'Verified' : 'Error';
+                statusIndicator.className = response.ok ? 'status success' : 'status error';
+
+                if (response.ok && data.contact) {
+                    const c = data.contact;
+
+                    const emailBadges = c.emails.map((e, i) =>
+                        `<span class="badge ${i === 0 ? 'highlight' : ''}">${e}</span>`
+                    ).join('');
+
+                    const phoneBadges = c.phoneNumbers.map((p, i) =>
+                        `<span class="badge ${i === 0 ? 'highlight' : ''}">${p}</span>`
+                    ).join('');
+
+                    const secondaryBadges = c.secondaryContactIds.length > 0
+                        ? c.secondaryContactIds.map(id => `<span class="badge">#${id}</span>`).join('')
+                        : `<span class="empty-text">No secondary accounts</span>`;
+
+                    parsedOutput.innerHTML = `
+                        <div class="data-card" style="text-align: center;">
+                            <div class="data-card-title">Primary Contact ID</div>
+                            <h2 class="data-primary-id">#${c.primaryContatctId}</h2>
+                        </div>
+                        <div class="data-card">
+                            <div class="data-card-title">Associated Emails</div>
+                            <div class="badge-list">${emailBadges || '<span class="empty-text">None</span>'}</div>
+                        </div>
+                        <div class="data-card">
+                            <div class="data-card-title">Associated Phone Numbers</div>
+                            <div class="badge-list">${phoneBadges || '<span class="empty-text">None</span>'}</div>
+                        </div>
+                        <div class="data-card">
+                            <div class="data-card-title">Linked Secondary IDs</div>
+                            <div class="badge-list">${secondaryBadges}</div>
+                        </div>
+                    `;
+                } else {
+                    parsedOutput.innerHTML = `<div class="error-message">${JSON.stringify(data)}</div>`;
+                }
+            } catch (error) {
+                statusIndicator.textContent = 'Offline';
+                statusIndicator.className = 'status error';
+                parsedOutput.innerHTML = `<div class="error-message">Failed to connect to backend.<br><br>Make sure you run <b>npm run dev</b> first.</div>`;
+            } finally {
+                btnText.style.display = 'block';
+                loader.style.display = 'none';
+                resultContainer.style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+
+</html>
