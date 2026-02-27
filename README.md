@@ -115,7 +115,7 @@ contains a form for entering email/phone and a script that calls the API and
 renders the response.  No additional build step is required.
 
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```text
 ├── prisma/
