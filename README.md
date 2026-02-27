@@ -1,21 +1,21 @@
-# 🔗 Bitespeed Identity Reconciliation
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-success?style=for-the-badge&logo=vercel)](#) *(<- Replace '#' with your actual deployed link)*
 
-## 📖 Overview
+
+
+## Overview
 
 An Express/TypeScript service that performs identity reconciliation for customer support tracking. Using a local SQLite database via Prisma, the API accepts an email address and/or phone number and responds with a consolidated contact record, seamlessly merging customer identities across different channels.
 
-## 🧠 Identity Reconciliation Process & Flowchart
+## Identity Reconciliation Process & Flowchart
 
 The core logic of the `/identify` endpoint ensures that a single user is always tracked under one primary identity, regardless of how many emails or phone numbers they use.
 
-### 🔄 Core Rules
+### Core Rules
 1. **New Customer:** If the provided email and phone number don't match any existing records in our database, a new `primary` contact is created.
 2. **Adding New Information:** If the request contains new information (e.g., a new phone number) but matches an existing contact (e.g., by email), a new `secondary` contact is created and linked to the original primary contact.
 3. **Merging Identities (The Tricky Part):** If the request contains an email and phone number that currently belong to *separate* primary contacts, the system merges them. The older contact remains `primary`, while the newer contact is updated to `secondary` and linked to the older one.
 
-### 📊 Process Flow Diagram
+### Process Flow Diagram
 ```mermaid
 graph TD
     A[POST /identify Request] --> B{Data matches existing contact?}
@@ -31,7 +31,7 @@ graph TD
     H --> I
 ```
 
-## 💻 Setup & Run
+## Setup & Run
 
 1. **Clone the repository** or copy the project files to a directory of your choosing.
 2. **Install dependencies**:
@@ -127,9 +127,4 @@ you have a live URL.
 
 ---
 
-## 🚀 Deployment Guide (For Live Demo)
 
-To get your live demo working to share with recruiters:
-1. **Backend:** Deploy this repository to a free service like [Render](https://render.com/) or [Railway](https://railway.app/). They natively support Node.js and SQLite deployments.
-2. **Frontend:** Update the `http://localhost:3000/identify` URL in your `test.html` script to point to your new live backend URL.
-3. **Host Frontend:** Upload your `test.html` and index files to [GitHub Pages](https://pages.github.com/) or [Vercel](https://vercel.com/) for a complete live showcase.
